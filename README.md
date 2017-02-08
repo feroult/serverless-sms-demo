@@ -20,9 +20,8 @@ Firebase, BigQuery and Twilio.
 1. Copy ```config.js.template``` to ```config.js``` and populate fields.
 1. Download a service account from the Firebase Console and save it
 as ```firebase-service-account.json```.
-1. Download a Google Cloud Platform service account and save it as
-```keyfile.json```.
-1. Install dependencies.
+1. Download a Google Cloud Platform service account and save it as ```keyfile.json```.
+1. (Optional) Install dependencies
 
    ```$ npm install```
 #### Deploy the Cloud Function
@@ -36,8 +35,7 @@ to the internet.
 ### Configure Twilio
 - Set your Twilio number to do a GET request on message receive to
 the URL of your Cloud Function. Set the optional ```bq``` querystring
-parameter to specify your destination BigQuery table. E.g.
-```https://us-central1-my-functions-proj.cloudfunctions.net/smsNL?bq=nl_demo```
+parameter to specify your destination BigQuery table. E.g. ```https://us-central1-my-functions-proj.cloudfunctions.net/smsNL?bq=nl_demo```
 
 ### Create BigQuery table
 Create your table with the following schema, and make sure it has the same
