@@ -1,0 +1,19 @@
+{
+  "name": "sms-demo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bret McGowen",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@google-cloud/bigquery": "^0.4.0",
+    "@google-cloud/language": "^0.5.0",
+    "@google/cloud-debug": "^0.9.0",
+    "circular-json": "^0.3.1",
+    "firebase-admin": "^4.1.0",
+    "twilio": "^2.11.0"
+  }
+}

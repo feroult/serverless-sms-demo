@@ -1,3 +1,7 @@
+# Config files.
+config.js
+.firebaserc
+
 # Logs
 logs
 *.log
