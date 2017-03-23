@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Serverlezz</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+<div id="emojis"></div>
+
+<script src="https://www.gstatic.com/firebasejs/3.7.3/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "<api-key>",
+        authDomain: "<domain>",
+        databaseURL: "<database-url>",
+        storageBucket: "<storage-bucket>",
+        messagingSenderId: "<messaging-sender-id>"
+    };
+    firebase.initializeApp(config);
+</script>
+<script src="index.js"></script>
+
+</body>
+</html>
+
+

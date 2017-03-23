@@ -1,3 +1,9 @@
+*.iml
+.idea
+firebase-service-account.json
+keyfile.json
+visualizer/public/index.html
+
 # Config files.
 config.js
 .firebaserc
@@ -39,3 +45,4 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
