@@ -10,22 +10,57 @@ admin.initializeApp({
 });
 var database = admin.database();
 
-var circularJson = require('circular-json');
-var twilio = require('twilio');
 var bigquery = require('@google-cloud/bigquery')({
     projectId: config.projectId,
     keyFilename: 'keyfile.json'
 });
+
 var language = require('@google-cloud/language')({
     projectId: config.projectId,
     keyFilename: 'keyfile.json'
 });
 
+var https = require('https');
+
+function sendResponse({from, to, text}, callback) {
+    var data = JSON.stringify({
+        api_key: config.nexmo.apiKey,
+        api_secret: config.nexmo.secret,
+        to: to,
+        from: from,
+        text: text
+    });
+
+    var options = {
+        host: 'rest.nexmo.com',
+        path: '/sms/json',
+        port: 443,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(data)
+        }
+    };
+    var req = https.request(options);
+    req.write(data);
+    req.end();
+
+    var responseData = '';
+    req.on('response', function (res) {
+        res.on('data', function (chunk) {
+            responseData += chunk;
+        });
+        res.on('end', function () {
+            callback(JSON.parse(responseData));
+        });
+    });
+}
+
 exports.smsNL = function (req, res) {
     console.log('smsNL-Visualizer', JSON.stringify(req.body), JSON.stringify(req.query));
 
     var fromNumber = req.query.msisdn;
-    var text = req.query.text;
+    var text = req.query.text || 'normal';
     let toNumber = req.query.to;
     let bqTableName = req.query.bq || config.defaultBqTableName;
 
@@ -37,11 +72,14 @@ exports.smsNL = function (req, res) {
             return;
         }
         let emoji = "😄";
+        let feeling = ':D'
         let sentimentScore = annotation.sentiment.polarity;
         if (sentimentScore < 50 && sentimentScore > -50) {
             emoji = "😐";
+            feeling = ':-|';
         } else if (sentimentScore <= -50) {
             emoji = "😔";
+            feeling = ':('
         }
         console.log(`${text} - ${emoji} - ${sentimentScore}`);
 
@@ -70,24 +108,16 @@ exports.smsNL = function (req, res) {
             } else if (insertErr.length === 0) {
                 let bqStatusMsg = `Written to BQ: ${text} - (${sentimentScore})`;
                 console.log(bqStatusMsg);
-                // var client = new twilio.RestClient(config.twilio.accountSid, config.twilio.authToken);
-                // // Send a message back.
-                // client.messages.create({
-                // 	body: `Based on your message, you seem ${emoji}`,
-                // 	to: fromNumber,  // Text this number
-                // 	from: toNumber // From a valid number
-                // }, function (err, message) {
-                // 	if (err) {
-                // 		console.error(err.message);
-                // 		res.status(500).send('Twilio response error.');
-                // 		return;
-                // 	} else {
-                // 		res.status(200).send(bqStatusMsg);
-                // 		return;
-                // 	}
-                // });
-
-                res.status(200).send(text);
+                // Send a message back.
+                sendResponse({
+                    text: `Based on your message, you seem ${feeling}`,
+                    to: fromNumber,
+                    from: toNumber
+                }, function (result) {
+                    console.log('result', result);
+                    res.status(200).send(bqStatusMsg);
+                    return;
+                });
             }
         });
     });

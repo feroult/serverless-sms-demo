@@ -23,9 +23,8 @@ module.exports = {
   firebase: {
     databaseURL: 'https://<firebase-database>.firebaseio.com'
   },
-	twilio: {
-		phoneNumber: '',
-		accountSid: '',
-		authToken: ''
+	nexmo: {
+		apiKey: '<api-key>',
+		secret: '<secret>'
 	}
 }
