@@ -78,7 +78,7 @@ exports.smsNL = function (req, res) {
             console.log(`Text: ${text}`);
             console.log(`Translation: ${translation}`);
 
-            language.annotate(text, {verbose: true}, function (err, annotation) {
+            language.annotate(translation, {verbose: true}, function (err, annotation) {
                 if (err) {
                     console.error(err);
                     res.status(500).send('NL error: ' + err);
@@ -99,7 +99,8 @@ exports.smsNL = function (req, res) {
                 // Write to Firebase.
                 console.log('Writing to Firebase...');
                 database.ref('sms').push({
-                    emoji: emoji
+                    emoji: emoji,
+                    text: text
                 });
 
                 // Log to BigQuery.
