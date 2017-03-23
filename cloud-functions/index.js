@@ -22,15 +22,14 @@ var language = require('@google-cloud/language')({
 });
 
 exports.smsNL = function (req, res) {
-    console.log('smsNL-Visualizer');
-    var fromNumber = req.query.From;
-    var text = req.query.Body;
-    var fromCountry = req.query.FromCountry;
-    var fromCity = req.query.FromCity;
-    let twilioNumber = req.query.To || config.twilio.phoneNumber;
+    console.log('smsNL-Visualizer', JSON.stringify(req.body), JSON.stringify(req.query));
+
+    var fromNumber = req.query.msisdn;
+    var text = req.query.text;
+    let toNumber = req.query.to;
     let bqTableName = req.query.bq || config.defaultBqTableName;
 
-    console.log(`smsNL: "${text}" sent from ${fromNumber}, ${fromCountry},${fromCity}, saving to ${bqTableName}`);
+    console.log(`smsNL: "${text}" sent from ${fromNumber}, saving to ${bqTableName}`);
     language.annotate(text, {verbose: true}, function (err, annotation, apiResponse) {
         if (err) {
             console.error(err);
@@ -57,9 +56,7 @@ exports.smsNL = function (req, res) {
             message_text: text,
             tokens: JSON.stringify(annotation.tokens),
             polarity: (annotation.sentiment.polarity).toString(),
-            magnitude: (annotation.sentiment.magnitude).toString(),
-            from_city: fromCity,
-            from_country: fromCountry
+            magnitude: (annotation.sentiment.magnitude).toString()
         };
         let bigQueryDataset = bigquery.dataset(config.bqDatasetName);
         let bigQueryTable = bigQueryDataset.table(bqTableName);
@@ -78,7 +75,7 @@ exports.smsNL = function (req, res) {
                 // client.messages.create({
                 // 	body: `Based on your message, you seem ${emoji}`,
                 // 	to: fromNumber,  // Text this number
-                // 	from: twilioNumber // From a valid Twilio number
+                // 	from: toNumber // From a valid number
                 // }, function (err, message) {
                 // 	if (err) {
                 // 		console.error(err.message);
