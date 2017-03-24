@@ -109,7 +109,8 @@ exports.smsNL = function (req, res) {
                     tokens: JSON.stringify(annotation.tokens),
                     polarity: (annotation.sentiment.polarity).toString(),
                     magnitude: (annotation.sentiment.magnitude).toString(),
-                    emoji: emoji
+                    emoji: emoji,
+                    sentimentScore: sentimentScore
                 };
                 let bigQueryDataset = bigquery.dataset(config.bqDatasetName);
                 let bigQueryTable = bigQueryDataset.table(bqTableName);
@@ -123,6 +124,7 @@ exports.smsNL = function (req, res) {
                     } else if (insertErr.length === 0) {
                         let bqStatusMsg = `Written to BQ: ${text} - (${sentimentScore})`;
                         console.log(bqStatusMsg);
+                        res.status(200).send(bqStatusMsg);
                         sendResponse({
                             text: `Based on your message, you seem ${feeling}`,
                             to: fromNumber,
