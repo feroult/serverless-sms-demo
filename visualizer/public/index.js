@@ -6,13 +6,29 @@ db.ref('sms').on('child_added', snapshot => {
     console.log(val.emoji);
     if (val.emoji) {
         let emojiList = window.document.getElementById('emojis');
-        let item = window.document.createElement('span');
+        let emoji = window.document.createElement('span');
+        let text = window.document.createElement('span');
+
         let d = dimensions();
-        item.innerText = val.emoji + " ";
-        item.style.position = 'absolute';
-        item.style.left = Math.floor(Math.random() * (d.x-100)) + 'px';
-        item.style.top = Math.floor(Math.random() * (d.y-100)) + 'px';
-        emojiList.appendChild(item);
+        var left = Math.floor(Math.random() * (d.x - 100));
+        var top = Math.floor(Math.random() * (d.y - 100));
+
+        emoji.innerText = val.emoji + " ";
+        emoji.style.position = 'absolute';
+        emoji.style.left = left + 'px';
+        emoji.style.top = top + 'px';
+        emoji.style.fontSize = '50px';
+        emojiList.appendChild(emoji);
+
+        text.innerText = val.text ? val.text : '';
+        text.style.position = 'absolute';
+        text.style.left = (left + 58) + 'px';
+        text.style.top = (top+17) + 'px';
+        text.style.fontSize = '18px';
+        text.style.fontWeight = 'bold';
+        text.style.whiteSpace = 'no-wrap';
+        emojiList.appendChild(text);
+
     }
 });
 

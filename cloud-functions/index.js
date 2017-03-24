@@ -108,7 +108,8 @@ exports.smsNL = function (req, res) {
                     message_text: text,
                     tokens: JSON.stringify(annotation.tokens),
                     polarity: (annotation.sentiment.polarity).toString(),
-                    magnitude: (annotation.sentiment.magnitude).toString()
+                    magnitude: (annotation.sentiment.magnitude).toString(),
+                    emoji: emoji
                 };
                 let bigQueryDataset = bigquery.dataset(config.bqDatasetName);
                 let bigQueryTable = bigQueryDataset.table(bqTableName);
