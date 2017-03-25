@@ -3,6 +3,7 @@
 firebase-service-account.json
 keyfile.json
 visualizer/public/index.html
+visualizer/public/real-time.html
 
 # Config files.
 config.js
