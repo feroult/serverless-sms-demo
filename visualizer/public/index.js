@@ -21,13 +21,15 @@ db.ref('sms').on('child_added', snapshot => {
         emojiList.appendChild(emoji);
 
         text.innerText = val.text ? val.text : '';
-        text.style.position = 'absolute';
+        text.className = 'text';
         text.style.left = (left + 58) + 'px';
-        text.style.top = (top+17) + 'px';
-        text.style.fontSize = '18px';
-        text.style.fontWeight = 'bold';
-        text.style.whiteSpace = 'no-wrap';
+        text.style.top = (top + 17) + 'px';
         emojiList.appendChild(text);
+
+        setTimeout(() => {
+            text.className = 'text  fadeout';
+        }, 2500);
+
 
     }
 });

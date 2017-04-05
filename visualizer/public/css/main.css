@@ -5,3 +5,17 @@ body {
     height: 100%;
 }
 
+.text {
+    position: absolute;
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    background-color: white;
+    padding: 4px;
+}
+
+.fadeout {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 2s, opacity 2s linear;
+}

@@ -124,19 +124,27 @@ exports.smsNL = function (req, res) {
                     } else if (insertErr.length === 0) {
                         let bqStatusMsg = `Written to BQ: ${text} - (${sentimentScore})`;
                         console.log(bqStatusMsg);
-                        res.status(200).send(bqStatusMsg);
-                        sendResponse({
-                            text: `Based on your message, you seem ${feeling}`,
-                            to: fromNumber,
-                            from: toNumber
-                        }, function (result) {
-                            console.log('result', result);
+
+                        if (fromNumber !== 'twitter') {
+                            sendResponse({
+                                text: `Based on your message, you seem ${feeling}`,
+                                to: fromNumber,
+                                from: toNumber
+                            }, function (result) {
+                                console.log('result', result);
+                                res.status(200).send(bqStatusMsg);
+                                return;
+                            });
+                        } else {
                             res.status(200).send(bqStatusMsg);
-                            return;
-                        });
+                        }
                     }
 
                 });
             });
+        })
+        .catch(err => {
+            console.log('translate error', err, text);
+            res.status(500).send('language error');
         });
 };
