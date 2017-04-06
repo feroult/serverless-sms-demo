@@ -22,7 +22,7 @@ db.ref('sms').on('child_added', snapshot => {
         text.innerText = val.text ? val.text : '';
         text.className = 'text';
         text.style.left = (left + 58) + 'px';
-        text.style.top = (top + 22) + 'px';
+        text.style.top = (top + 14) + 'px';
         emojiList.appendChild(text);
 
         setTimeout(() => {
