@@ -14,10 +14,9 @@ db.ref('sms').on('child_added', snapshot => {
         var top = Math.floor(Math.random() * (d.y - 100));
 
         emoji.innerText = val.emoji + " ";
-        emoji.style.position = 'absolute';
+        emoji.className = 'emoji';
         emoji.style.left = left + 'px';
         emoji.style.top = top + 'px';
-        emoji.style.fontSize = '50px';
         emojiList.appendChild(emoji);
 
         text.innerText = val.text ? val.text : '';
@@ -27,7 +26,8 @@ db.ref('sms').on('child_added', snapshot => {
         emojiList.appendChild(text);
 
         setTimeout(() => {
-            text.className = 'text  fadeout';
+            emoji.className = 'emoji fadeout';
+            text.className = 'text fadeout';
         }, 2500);
 
 

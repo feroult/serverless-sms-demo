@@ -71,80 +71,80 @@ exports.smsNL = function (req, res) {
 
     console.log(`smsNL: "${text}" sent from ${fromNumber}, saving to ${bqTableName}`);
 
-    translate.translate(text, {from: 'pt-BR', to: 'en'})
-        .then((results) => {
-            const translation = results[0];
+    translate.translate(text, {from: 'pt-BR', to: 'en'}).then((results) => {
+        const translation = results[0];
 
-            console.log(`Text: ${text}`);
-            console.log(`Translation: ${translation}`);
+        console.log(`Text: ${text}`);
+        console.log(`Translation: ${translation}`);
 
-            language.annotate(translation, {verbose: true}, function (err, annotation) {
-                if (err) {
-                    console.error(err);
-                    res.status(500).send('NL error: ' + err);
-                    return;
-                }
-                let emoji = "😄";
-                let feeling = ':D';
-                let sentimentScore = annotation.sentiment.polarity;
-                if (sentimentScore < 50 && sentimentScore > -50) {
-                    emoji = "😐";
-                    feeling = ':-|';
-                } else if (sentimentScore <= -50) {
-                    emoji = "😔";
-                    feeling = ':('
-                }
-                console.log(`${text} - ${emoji} - ${sentimentScore}`);
+        language.annotate(translation, {verbose: true}, function (err, annotation) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('NL error: ' + err);
+                return;
+            }
 
-                // Write to Firebase.
-                console.log('Writing to Firebase...');
-                database.ref('sms').push({
-                    emoji: emoji,
-                    text: text
-                });
+            let emoji = "😄";
+            let feeling = ':D';
+            let sentimentScore = annotation.sentiment.score;
+            var THRESHOLD = 0.25;
 
-                // Log to BigQuery.
-                let row = {
-                    message_text: text,
-                    tokens: JSON.stringify(annotation.tokens),
-                    polarity: (annotation.sentiment.polarity).toString(),
-                    magnitude: (annotation.sentiment.magnitude).toString(),
-                    emoji: emoji,
-                    sentimentScore: sentimentScore
-                };
-                let bigQueryDataset = bigquery.dataset(config.bqDatasetName);
-                let bigQueryTable = bigQueryDataset.table(bqTableName);
-                bigQueryTable.insert(row, function (error, insertErr, apiResp) {
-                    console.log('Writing to BigQuery...');
-                    // console.log(apiResp.insertErrors[0]);
-                    if (error) {
-                        console.log('err', error);
-                        res.status(500).send('BigQuery error');
-                        return;
-                    } else if (insertErr.length === 0) {
-                        let bqStatusMsg = `Written to BQ: ${text} - (${sentimentScore})`;
-                        console.log(bqStatusMsg);
+            if (sentimentScore < THRESHOLD && sentimentScore > -THRESHOLD) {
+                emoji = "😐";
+                feeling = ':-|';
+            } else if (sentimentScore <= -THRESHOLD) {
+                emoji = "😔";
+                feeling = ':('
+            }
 
-                        if (fromNumber !== 'twitter') {
-                            sendResponse({
-                                text: `Based on your message, you seem ${feeling}`,
-                                to: fromNumber,
-                                from: toNumber
-                            }, function (result) {
-                                console.log('result', result);
-                                res.status(200).send(bqStatusMsg);
-                                return;
-                            });
-                        } else {
-                            res.status(200).send(bqStatusMsg);
-                        }
-                    }
+            console.log(`${text} - ${emoji} - ${sentimentScore}`);
 
-                });
+            // Write to Firebase.
+            console.log('Writing to Firebase...');
+            database.ref('sms').push({
+                emoji: emoji,
+                text: text
             });
-        })
-        .catch(err => {
-            console.log('translate error', err, text);
-            res.status(500).send('language error');
+
+            // Log to BigQuery.
+            let row = {
+                text: text,
+                emoji: emoji,
+                sentimentScore: sentimentScore,
+                tokens: JSON.stringify(annotation.tokens)
+            };
+            let bigQueryDataset = bigquery.dataset(config.bqDatasetName);
+            let bigQueryTable = bigQueryDataset.table(bqTableName);
+
+            bigQueryTable.insert(row, function (error) {
+
+                console.log('Writing to BigQuery...', error);
+
+                if (error) {
+                    console.log('err', error);
+                    res.status(500).send('BigQuery error');
+                    return;
+                } else {
+                    let bqStatusMsg = `Written to BQ: ${text} - (${sentimentScore})`;
+                    console.log(bqStatusMsg);
+
+                    if (fromNumber !== 'twitter') {
+                        sendResponse({
+                            text: `Based on your message, you seem ${feeling}`,
+                            to: fromNumber,
+                            from: toNumber
+                        }, function (result) {
+                            console.log('result', result);
+                            res.status(200).send(bqStatusMsg);
+                            return;
+                        });
+                    } else {
+                        res.status(200).send(bqStatusMsg);
+                    }
+                }
+
+            });
         });
+    });
+
 };
