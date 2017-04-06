@@ -22,13 +22,13 @@ db.ref('sms').on('child_added', snapshot => {
         text.innerText = val.text ? val.text : '';
         text.className = 'text';
         text.style.left = (left + 58) + 'px';
-        text.style.top = (top + 14) + 'px';
+        text.style.top = (top + 8) + 'px';
         emojiList.appendChild(text);
 
         setTimeout(() => {
             emoji.className = 'emoji fadeout';
             text.className = 'text fadeout';
-        }, 2500);
+        }, 3500);
 
 
     }
