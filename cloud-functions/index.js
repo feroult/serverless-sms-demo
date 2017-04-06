@@ -111,7 +111,7 @@ exports.smsNL = function (req, res) {
                 text: text,
                 emoji: emoji,
                 sentimentScore: sentimentScore,
-                timestamp: new Date().getTime() * 1000,
+                timestamp: (new Date().getTime() * 1000),
                 tokens: JSON.stringify(annotation.tokens)
             };
             let bigQueryDataset = bigquery.dataset(config.bqDatasetName);
