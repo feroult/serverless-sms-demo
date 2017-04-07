@@ -28,12 +28,10 @@ var translate = require('@google-cloud/translate')({
 var https = require('https');
 
 exports.smsNL = function (req, res) {
-    console.log('smsNL-Visualizer', JSON.stringify(req.body), JSON.stringify(req.query));
-
-    var fromNumber = req.query.msisdn;
-    var text = req.query.text || 'normal';
-    let toNumber = req.query.to;
-    let bqTableName = req.query.bq || config.defaultBqTableName;
+    const fromNumber = req.query.msisdn;
+    const text = req.query.text || 'normal';
+    const toNumber = req.query.to;
+    const bqTableName = req.query.bq || config.defaultBqTableName;
 
     console.log(`smsNL: "${text}" sent from ${fromNumber}, saving to ${bqTableName}`);
 
@@ -115,7 +113,6 @@ exports.smsNL = function (req, res) {
     });
 
 };
-
 
 function sendResponse({from, to, text}, callback) {
     var data = JSON.stringify({
