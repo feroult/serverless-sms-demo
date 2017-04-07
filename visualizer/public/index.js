@@ -1,5 +1,13 @@
+var initialDataLoaded = false;
+
 var db = firebase.database();
-db.ref('sms').on('child_added', snapshot => {
+var ref = db.ref('sms');
+
+ref.on('child_added', snapshot => {
+    if (!initialDataLoaded) {
+        return;
+    }
+
     console.log('child added');
     let val = snapshot.val();
     console.log(val);
@@ -29,9 +37,11 @@ db.ref('sms').on('child_added', snapshot => {
             emoji.className = 'emoji fadeout';
             text.className = 'text fadeout';
         }, 3500);
-
-
     }
+});
+
+ref.once('value', () => {
+    initialDataLoaded = true;
 });
 
 function dimensions() {
