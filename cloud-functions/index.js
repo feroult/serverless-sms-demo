@@ -27,40 +27,6 @@ var translate = require('@google-cloud/translate')({
 
 var https = require('https');
 
-function sendResponse({from, to, text}, callback) {
-    var data = JSON.stringify({
-        api_key: config.nexmo.apiKey,
-        api_secret: config.nexmo.secret,
-        to: to,
-        from: from,
-        text: text
-    });
-
-    var options = {
-        host: 'rest.nexmo.com',
-        path: '/sms/json',
-        port: 443,
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(data)
-        }
-    };
-    var req = https.request(options);
-    req.write(data);
-    req.end();
-
-    var responseData = '';
-    req.on('response', function (res) {
-        res.on('data', function (chunk) {
-            responseData += chunk;
-        });
-        res.on('end', function () {
-            callback(JSON.parse(responseData));
-        });
-    });
-}
-
 exports.smsNL = function (req, res) {
     console.log('smsNL-Visualizer', JSON.stringify(req.body), JSON.stringify(req.query));
 
@@ -87,7 +53,7 @@ exports.smsNL = function (req, res) {
             let emoji = "😄";
             let feeling = ':D';
             let sentimentScore = annotation.sentiment.score;
-            var THRESHOLD = 0.25;
+            var THRESHOLD = 0.15;
 
             if (sentimentScore < THRESHOLD && sentimentScore > -THRESHOLD) {
                 emoji = "😐";
@@ -149,3 +115,38 @@ exports.smsNL = function (req, res) {
     });
 
 };
+
+
+function sendResponse({from, to, text}, callback) {
+    var data = JSON.stringify({
+        api_key: config.nexmo.apiKey,
+        api_secret: config.nexmo.secret,
+        to: to,
+        from: from,
+        text: text
+    });
+
+    var options = {
+        host: 'rest.nexmo.com',
+        path: '/sms/json',
+        port: 443,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(data)
+        }
+    };
+    var req = https.request(options);
+    req.write(data);
+    req.end();
+
+    var responseData = '';
+    req.on('response', function (res) {
+        res.on('data', function (chunk) {
+            responseData += chunk;
+        });
+        res.on('end', function () {
+            callback(JSON.parse(responseData));
+        });
+    });
+}
