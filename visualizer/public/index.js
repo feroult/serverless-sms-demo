@@ -19,7 +19,7 @@ ref.on('child_added', snapshot => {
 
         let d = dimensions();
         var left = Math.floor(Math.random() * (d.x - 100));
-        var top = Math.floor(Math.random() * (d.y - 100));
+        var top = Math.floor(Math.random() * (d.y - 200)) + 100;
 
         emoji.innerText = val.emoji + " ";
         emoji.className = 'emoji';
