@@ -55,7 +55,7 @@ exports.smsNL = function (req, res) {
 
             if (sentimentScore < THRESHOLD && sentimentScore > -THRESHOLD) {
                 emoji = "😐";
-                feeling = ':-|';
+                feeling = ':-/';
             } else if (sentimentScore <= -THRESHOLD) {
                 emoji = "😔";
                 feeling = ':('
@@ -95,7 +95,7 @@ exports.smsNL = function (req, res) {
 
                     if (fromNumber !== 'twitter') {
                         sendResponse({
-                            text: `Based on your message, you seem ${feeling}`,
+                            text: `Baseado na sua mensagem, voce parece ${feeling}`,
                             to: fromNumber,
                             from: toNumber
                         }, function (result) {
